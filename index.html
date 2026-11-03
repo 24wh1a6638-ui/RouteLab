@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RouteLab | Routing Simulator</title><link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><div class="brandmark">R</div><div><h1>RouteLab</h1><small>NETWORK ROUTING LABORATORY</small></div></div>
+  <div class="top-actions"><span class="live-dot"></span><span>SIMULATION READY</span><button id="resetBtn" class="ghost">Reset network</button></div>
+</header>
+<main>
+<section class="hero">
+ <div><div class="eyebrow">COMPUTER NETWORKS • ROUTING ALGORITHMS</div><h2>See how networks<br><em>find their way.</em></h2>
+ <p>Explore Distance Vector and Link State routing, visualize shortest paths, and compare how routers learn the network.</p></div>
+ <div class="hero-stat"><span>NETWORK NODES</span><strong id="nodeCount">6</strong><small>Connected routers</small></div>
+</section>
+<nav class="tabs">
+ <button class="tab active" data-tab="topology">01&nbsp; Network topology</button>
+ <button class="tab" data-tab="distance">02&nbsp; Distance vector</button>
+ <button class="tab" data-tab="link">03&nbsp; Link state</button>
+ <button class="tab" data-tab="compare">04&nbsp; Compare algorithms</button>
+</nav>
+<section id="topology" class="panel active">
+ <div class="section-head"><div><div class="eyebrow">LIVE NETWORK MAP</div><h3>Topology workspace</h3><p>Choose a source and destination, then run either routing algorithm.</p></div><div class="legend"><span><i class="key router"></i>Router</span><span><i class="key path"></i>Selected path</span><span><i class="key link"></i>Link cost</span></div></div>
+ <div class="workspace">
+  <div class="graph-wrap"><svg id="network" viewBox="0 0 760 410" role="img" aria-label="Network topology graph"></svg></div>
+  <aside class="control-card"><h4>Simulation controls</h4>
+   <label>Source router<select id="source"></select></label><label>Destination router<select id="destination"></select></label>
+   <label>Algorithm<select id="algorithm"><option value="dv">Distance Vector</option><option value="ls">Link State (Dijkstra)</option></select></label>
+   <button id="runBtn" class="primary full">▶ Run simulation</button><button id="clearPath" class="secondary full">Clear highlighted path</button>
+   <div class="result-box"><small>SHORTEST PATH COST</small><strong id="pathCost">—</strong><small id="pathText">Run a simulation to view the route.</small></div>
+   <div class="hint">Tip: Change a link cost below and run again to observe how the route changes.</div>
+  </aside>
+ </div>
+ <div class="editor-card"><div class="section-head compact"><div><h4>Link cost editor</h4><p>Adjust a connection cost (lower cost is preferred).</p></div></div>
+ <div class="edge-controls"><label>Connection<select id="edgeSelect"></select></label><label>New cost<input id="edgeCost" type="number" min="1" max="20" value="4"></label><button id="updateEdge" class="secondary">Update link</button><button id="restoreEdges" class="ghost">Restore defaults</button></div></div>
+</section>
+<section id="distance" class="panel">
+ <div class="section-head"><div><div class="eyebrow">DISTRIBUTED ROUTING</div><h3>Distance Vector algorithm</h3><p>Routers exchange distance information with their immediate neighbours and iteratively improve routes.</p></div><span class="pill teal">Bellman–Ford principle</span></div>
+ <div class="algorithm-grid"><div class="info-card"><h4>How it works</h4><ol><li>Each router starts with its direct-link costs.</li><li>Routers share their distance vectors with neighbours.</li><li>Each router checks whether a neighbour offers a cheaper route.</li><li>Updates continue until no routing entry changes.</li></ol><button id="runDV" class="primary">Run Distance Vector</button></div><div class="info-card"><h4>Convergence monitor</h4><div class="metrics"><div><small>ROUNDS</small><strong id="dvRounds">—</strong></div><div><small>UPDATES</small><strong id="dvUpdates">—</strong></div><div><small>STATUS</small><strong id="dvStatus">Ready</strong></div></div><p id="dvSummary" class="muted">Run the algorithm to generate routing tables for all routers.</p></div></div>
+ <div class="table-card"><div class="table-title"><h4>Routing table</h4><label>Router <select id="dvRouter"></select></label></div><div id="dvTable" class="table-scroll"><p class="muted">Run Distance Vector to display the table.</p></div></div>
+ <div class="table-card"><h4>Round-by-round event log</h4><div id="dvLog" class="event-log">Waiting for simulation…</div></div>
+</section>
+<section id="link" class="panel">
+ <div class="section-head"><div><div class="eyebrow">GLOBAL TOPOLOGY KNOWLEDGE</div><h3>Link State algorithm</h3><p>Each router builds a topology map and uses Dijkstra's algorithm to calculate shortest paths.</p></div><span class="pill blue">Dijkstra's algorithm</span></div>
+ <div class="algorithm-grid"><div class="info-card"><h4>How it works</h4><ol><li>Routers discover their directly connected neighbours.</li><li>Link-state information is shared across the network.</li><li>Each router builds a common topology database.</li><li>Dijkstra selects the lowest-cost path from the source.</li></ol><button id="runLS" class="primary">Run Link State</button></div><div class="info-card"><h4>Shortest-path result</h4><div class="metrics"><div><small>VISITED NODES</small><strong id="lsVisited">—</strong></div><div><small>PATH COST</small><strong id="lsCost">—</strong></div><div><small>HOPS</small><strong id="lsHops">—</strong></div></div><p id="lsSummary" class="muted">Choose source and destination in the topology workspace.</p></div></div>
+ <div class="table-card"><h4>Dijkstra distance table</h4><div id="lsTable" class="table-scroll"><p class="muted">Run Link State to display distances and predecessors.</p></div></div>
+ <div class="table-card"><h4>Algorithm execution trace</h4><div id="lsLog" class="event-log">Waiting for simulation…</div></div>
+</section>
+<section id="compare" class="panel">
+ <div class="section-head"><div><div class="eyebrow">SIDE-BY-SIDE ANALYSIS</div><h3>Compare routing approaches</h3><p>Review the core differences between the two routing families.</p></div></div>
+ <div class="comparison"><div class="compare-head"><span>Feature</span><b>Distance Vector</b><b>Link State</b></div>
+ <div><span>Network knowledge</span><span>Neighbour distance information</span><span>Full topology map</span></div>
+ <div><span>Core algorithm</span><span>Bellman–Ford principle</span><span>Dijkstra's algorithm</span></div>
+ <div><span>Information sharing</span><span>Routing vectors with neighbours</span><span>Link-state advertisements</span></div>
+ <div><span>Convergence</span><span>May take multiple update rounds</span><span>Typically faster with current topology data</span></div>
+ <div><span>Resource usage</span><span>Generally lower CPU and memory needs</span><span>More topology and computation overhead</span></div>
+ <div><span>Example protocol</span><span>RIP</span><span>OSPF, IS-IS</span></div></div>
+ <div class="note"><b>Important:</b> This simulator demonstrates simplified algorithmic behaviour on a small weighted graph. Real routing protocols include additional mechanisms such as timers, packet formats, area design, metrics and failure handling.</div>
+ <div class="table-card"><h4>Current network summary</h4><div class="metrics"><div><small>ROUTERS</small><strong id="sumNodes">6</strong></div><div><small>LINKS</small><strong id="sumEdges">9</strong></div><div><small>NETWORK TYPE</small><strong>Weighted</strong></div></div></div>
+</section>
+<footer>RouteLab • Educational simulator • Built with HTML, CSS and JavaScript</footer>
+</main><script src="script.js"></script>
+</body></html>
